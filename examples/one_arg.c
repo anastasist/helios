@@ -9,7 +9,7 @@ int main(int argc, char ** argv) {
         printf("Usage: %s <arg1>\n", argv[0]);
         return 1;
     }
-    if (strcmp(argv[1], "--magic") == 0) {
+    if (strcmp(argv[1], "bug") == 0) {
         printf("Crashing...\n");
         int * crash = NULL;
         *crash = 0;

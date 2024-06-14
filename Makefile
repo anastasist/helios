@@ -23,6 +23,6 @@ shell:
 	 docker run -v $(shell pwd):/$(ARGFUZZ_FOLDER) -w /$(ARGFUZZ_FOLDER) -it aflplusplus/aflplusplus:latest bash
 
 test:
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so afl-fuzz -i input/ -o output -Q -- ./examples/one_arg
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so afl-fuzz -i input/ -f seed -o output -Q -- ./examples/one_arg
 
 .PHONY: clean examples shell
