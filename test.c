@@ -26,8 +26,7 @@ int arg_fuzz__argparse(FILE *argfuzz, int *argc, char **newargv){
             break;
         }
         if (!c){
-            newargv[i][j] = '\0';
-            i++;
+            newargv[i++][j] = '\0';
             j = 0;
             continue;
         }
@@ -59,7 +58,7 @@ int __libc_start_main(void * func_ptr, int argc, char * argv[], void (*init)(voi
         printf("argv[%d]: %s\n", i, argv[i]);
     }
 
-    char **new_argv;
+    char **mut_argv;
     if (!(new_argv= malloc(MAX_ARGC*sizeof(char*)))){
         perror("Failed to allocate mut_argv\n");
         exit(1);
@@ -74,14 +73,22 @@ int __libc_start_main(void * func_ptr, int argc, char * argv[], void (*init)(voi
     // Error check
     FILE *argfuzz = fopen("./seed", "r");
     int mut_argc;
-    arg_fuzz__argparse(argfuzz, &mut_argc, new_argv);
+    arg_fuzz__argparse(argfuzz, &mut_argc, mut_argv);
 
 
     printf("argc: %d\n", mut_argc);
     for (int i = 0; i <= mut_argc; i++) {
-        printf("argv[%d]: %s\n", i, new_argv[i]);
+        printf("argv[%d]: %s\n", i, mut_argv[i]);
     }
 
+    //help dictionary
+    //ascii only
+    //cfuzz
+    //https://github.com/CodeIntelligenceTesting/ci-fuzz-cli-tutorials
+    //gcof-lcov compilation flags
+
+    //checkpoint after libc argument parsing
+
     // Call the original libc_start_main function
-    return libc_start_main_orig(func_ptr, mut_argc, new_argv, init, fini, rtld_fini, stack_end);
+    return libc_start_main_orig(func_ptr, mut_argc, mut_argv, init, fini, rtld_fini, stack_end);
 }
