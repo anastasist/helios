@@ -40,6 +40,17 @@ int arg_fuzz__argparse(FILE *argfuzz, int *argc, char **newargv){
     return 0;
 }
 
+// int (*arg_fuzz__pre_main)(int, char **, char **) = &arg_fuzz__init_deferred_forkserver
+int (*arg_fuzz__main_ptr)(int, char **, char **);
+
+int arg_fuzz__init_deferred_forkserver(int argc, char *argv[], char *envp[]){
+    #ifdef __AFL_HAVE_MANUAL_CONTROL
+        __AFL_INIT();
+    #endif
+    printf("In deforkserver\n");
+    return arg_fuzz__main_ptr(argc, argv, envp);
+}
+
 // Function pointer to the original libc_start_main function
 int (*libc_start_main_orig)(int (*main)(int, char **, char **), int argc, char **ubp_av, void (*init)(void), void (*fini)(void), void (*rtld_fini)(void), void (*stack_end));
 
@@ -81,14 +92,8 @@ int __libc_start_main(void * func_ptr, int argc, char * argv[], void (*init)(voi
         printf("argv[%d]: %s\n", i, mut_argv[i]);
     }
 
-    //help dictionary
-    //ascii only
-    //cfuzz
-    //https://github.com/CodeIntelligenceTesting/ci-fuzz-cli-tutorials
-    //gcof-lcov compilation flags
-
-    //checkpoint after libc argument parsing
 
     // Call the original libc_start_main function
-    return libc_start_main_orig(func_ptr, mut_argc, mut_argv, init, fini, rtld_fini, stack_end);
+    arg_fuzz__main_ptr = func_ptr;
+    return libc_start_main_orig(arg_fuzz__init_deferred_forkserver, mut_argc, mut_argv, init, fini, rtld_fini, stack_end);
 }
