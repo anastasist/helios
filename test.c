@@ -59,13 +59,13 @@ int __libc_start_main(void * func_ptr, int argc, char * argv[], void (*init)(voi
     }
 
     char **mut_argv;
-    if (!(new_argv= malloc(MAX_ARGC*sizeof(char*)))){
+    if (!(mut_argv= malloc(MAX_ARGC*sizeof(char*)))){
         perror("Failed to allocate mut_argv\n");
         exit(1);
     }
     int i;
     for (i = 0; i < MAX_ARGC; i++){
-        if (!(new_argv[i]= malloc(MAX_ARG_LEN*sizeof(char)))){
+        if (!(mut_argv[i]= malloc(MAX_ARG_LEN*sizeof(char)))){
             perror("Failed to allocate mut_argv[i]\n");
             exit(1);
         }
