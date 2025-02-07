@@ -6,12 +6,7 @@ COPY . /arg-fuzz
 
 WORKDIR /arg-fuzz
 
-RUN mkdir -p input
-
-# RUN echo seed > input/seed
-RUN echo seed > seed
-
-RUN make all
+RUN mkdir -p input && echo seed > input/seed && make all
 
 USER root
 
