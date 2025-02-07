@@ -19,6 +19,8 @@ jobs:
   build-and-push-image:
 
     runs-on: ubuntu-latest
+    container:
+      options: --user root
 
     permissions:
       contents: read
