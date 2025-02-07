@@ -10,7 +10,7 @@ WORKDIR /arg-fuzz
 
 RUN mkdir -p input
 
-RUN mkdir -p output
+RUN mkdir -p output/default
 
 RUN echo seed > input/seed
 
