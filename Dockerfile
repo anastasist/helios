@@ -1,5 +1,7 @@
 FROM aflplusplus/aflplusplus:latest as builder
 
+RUN apt update && apt install sudo -fy
+
 COPY . /arg-fuzz
 
 WORKDIR /arg-fuzz
