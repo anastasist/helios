@@ -41,7 +41,7 @@ actions-test:
 	AFL_SKIP_CPUFREQ=1 \
 	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
-	sudo \
+	# sudo \
 	afl-fuzz \
 	-i input/ \
 	-f /inputs/seed \
