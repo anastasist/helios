@@ -60,7 +60,7 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}/output
         mkdir -p ${{ github.workspace }}/examples
-        docker run --rm -v ${{ github.workspace }}/output:/output -u $(id -u):$(id -g) ${{ env.REGISTRY }}/${{  env.IMAGE_NAME  }}:latest
+        docker run --rm -v ${{ github.workspace }}/output:/arg-fuzz/output -u $(id -u):$(id -g) ${{ env.REGISTRY }}/${{  env.IMAGE_NAME  }}:latest
     - uses: actions/upload-artifact@v4
       with:
         name: test-output
