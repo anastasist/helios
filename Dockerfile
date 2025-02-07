@@ -10,7 +10,14 @@ WORKDIR /arg-fuzz
 
 RUN mkdir -p input
 
-RUN mkdir -p output/default
+# Docker directory creations require root priviledges :)
+RUN mkdir -p output/default/.synced
+RUN mkdir -p output/default/crashes
+RUN mkdir -p output/default/hangs
+RUN mkdir -p output/default/queue/.state/auto_extras
+RUN mkdir -p output/default/queue/.state/deterministic_done
+RUN mkdir -p output/default/queue/.state/redundant_edges
+RUN mkdir -p output/default/queue/.state/variable_behavior
 
 RUN echo seed > input/seed
 
