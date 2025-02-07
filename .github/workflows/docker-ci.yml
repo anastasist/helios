@@ -60,7 +60,7 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}/output
         mkdir -p ${{ github.workspace }}/examples
-        docker run --rm -v ${{ github.workspace }}/output:/output -v ${{ github.workspace }}/examples:/examples -u $(id -u):$(id -g) ${{ env.REGISTRY }}/${{  env.IMAGE_NAME  }}:latest
+        docker run --rm -v ${{ github.workspace }}/output:/output -u $(id -u):$(id -g) ${{ env.REGISTRY }}/${{  env.IMAGE_NAME  }}:latest
     - uses: actions/upload-artifact@v3
       with:
         name: test-output
