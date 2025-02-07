@@ -8,11 +8,11 @@ WORKDIR /arg-fuzz
 
 # RUN ./bootstrap && ./configure CC=afl-gcc && make && make install
 
-RUN mkdir /input
+RUN mkdir -p input
 
-RUN mkdir /output
+RUN mkdir -p output
 
-RUN echo seed > /input/seed
+RUN echo seed > input/seed
 
 RUN make all
 
