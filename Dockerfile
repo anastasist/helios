@@ -8,7 +8,8 @@ WORKDIR /arg-fuzz
 
 RUN mkdir -p input
 
-RUN echo seed > input/seed
+# RUN echo seed > input/seed
+RUN echo seed > seed
 
 RUN make all
 
