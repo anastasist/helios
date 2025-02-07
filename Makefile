@@ -47,7 +47,7 @@ actions-test:
 	-f /inputs/seed \
 	-o output \
 	-G 12 \
-	+Q -- \
+	-Q -- \
 	./examples/one_arg
 
 demo_one:
