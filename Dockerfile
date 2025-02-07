@@ -16,7 +16,8 @@ RUN echo seed > /input/seed
 
 RUN make all
 
-RUN echo core | sudo tee /proc/sys/kernel/core_pattern > /dev/null # for afl
+#for afl
+RUN echo core > /proc/sys/kernel/core_pattern
 
 CMD ["make", "test"]
 # CMD ["AFL_SKIP_CPUFREQ=1", "QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so", "AFL_BENCH_UNTIL_CRASH=1", "afl-fuzz", "-i", "/input", "-f", "seed", "-o", "/output", "-V", "60", "-G", "12", "-Q". "--", "/examples/one_arg"]
