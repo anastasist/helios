@@ -44,7 +44,7 @@ actions-test:
 	# sudo \
 	afl-fuzz \
 	-i input/ \
-	-f /inputs/seed \
+	-f seed \
 	-o output \
 	-G 12 \
 	-Q -- \
