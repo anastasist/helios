@@ -1,4 +1,6 @@
 # Makefile to automatically build all .c files in the examples directory
+CFLAGS += --coverage -ftest-coverage
+
 
 default: all
 

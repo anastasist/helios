@@ -1,0 +1,7 @@
+examples/
+!/examples/*.*
+*.gc*
+*.so
+input/
+output/
+main

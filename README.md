@@ -1,10 +1,14 @@
 Initializing repo
 
 TODO:
+👑
+- [x] CI/CD github action build & test on push # Ask about alternatives and 777
+- [ ] libfuzzer compatibility
+- [ ] fix on arg2 (use red-queen?)
+- [ ] revisit AFL_INST_LIBS
 
 
 - [ ] refactor code - make project single header file
-- [ ] libfuzzer
 - [ ] sanitizers
 - [x] delayed fork server
 - [ ] blacklist address ranges
