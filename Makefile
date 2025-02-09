@@ -41,12 +41,12 @@ actions-test:
 	AFL_SKIP_CPUFREQ=1 \
 	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
-	# sudo \
 	afl-fuzz \
 	-i input/ \
 	-f seed \
 	-o output \
 	-G 12 \
+	-V 60 \
 	-Q -- \
 	./examples/one_arg
 
