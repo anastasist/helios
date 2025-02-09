@@ -59,8 +59,8 @@ jobs:
     - name: Test and upload test output as artifact
       run: |
         mkdir -p ${{ github.workspace }}/output
-        mkdir -p ${{ github.workspace }}/examples
-        docker run --rm -v ${{ github.workspace }}/output:/arg-fuzz/output -u $(id -u):$(id -g) ${{ env.REGISTRY }}/${{  env.IMAGE_NAME  }}:latest
+        mkdir -p ${{ github.workspace }}/examples                         #-u $(id -u):$(id -g) 
+        docker run --rm -v ${{ github.workspace }}/output:/arg-fuzz/output ${{ env.REGISTRY }}/${{  env.IMAGE_NAME  }}:latest
     - uses: actions/upload-artifact@v4
       with:
         name: test-output
