@@ -61,7 +61,7 @@ jobs:
         mkdir -p ${{ github.workspace }}/output
         mkdir -p ${{ github.workspace }}/examples                         #-u $(id -u):$(id -g) 
         docker run --rm -v ${{ github.workspace }}/output:/arg-fuzz/output ${{ env.REGISTRY }}/${{  env.IMAGE_NAME  }}:latest
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v3
       with:
         name: test-output
         path: ${{ github.workspace }}/output
