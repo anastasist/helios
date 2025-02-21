@@ -15,10 +15,10 @@ $(ARGFUZZ).so: $(ARGFUZZ).c
 
 clean:
 	rm -f $(ARGFUZZ).so
-	$(MAKE) -C examples clean
+	$(MAKE) -C examples/afl clean
 
 examples:
-	$(MAKE) -C examples
+	$(MAKE) -C examples/afl
 
 shell:
 	 docker run -v $(shell pwd):/$(ARGFUZZ_FOLDER) -w /$(ARGFUZZ_FOLDER) -it aflplusplus/aflplusplus:latest bash

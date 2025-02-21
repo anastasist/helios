@@ -1,7 +1,9 @@
-examples/
-!/examples/*.*
+examples/*/*
+!examples/*/*.*
+!examples/*/Makefile
 *.gc*
 *.so
 input/
 output/
 main
+*.out

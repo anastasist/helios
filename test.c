@@ -9,6 +9,7 @@
 #include <dlfcn.h>
 #include <unistd.h>
 #include <limits.h>
+#include <ctype.h>
 
 
 #define MAX_ARGC 16
@@ -22,10 +23,18 @@ int arg_fuzz__argparse(FILE *argfuzz, int *argc, char **newargv){
     while (i < MAX_ARGC-1){
         c = fgetc(argfuzz);
         if (c == EOF){
-            newargv[i++][j] = '\0';
+            if (j > 0)
+                newargv[i++][j] = '\0';
             break;
         }
         if (!c){
+        // if (isspace(c)){
+            // while (c = fgetc(argfuzz)) {
+            //     if (isspace(c))
+            //         continue;
+            //     ungetc(c, argfuzz);
+            //     break;
+            // }
             newargv[i++][j] = '\0';
             j = 0;
             continue;

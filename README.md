@@ -3,9 +3,14 @@ Initializing repo
 TODO:
 👑
 - [x] CI/CD github action build & test on push # Ask about alternatives and 777
-- [ ] libfuzzer compatibility
+- [ ] libfuzzer compatibility # Must clean test lib code, not hardcode
 - [ ] fix on arg2 (use red-queen?)
 - [ ] revisit AFL_INST_LIBS
+- [ ] source modification + libfuzzer - argfuzz as linked lib - modify source with functions
+- [ ] ldflags modification + libfuzzer
+- [ ] ιδέα για το two_arg.c πρόβλημα
+- [ ] ELF parser/transformation to inject new entrypoint
+- [x] check __AFL_HAVE_MANUAL_CONTROL - might not work properly by default
 
 
 - [ ] refactor code - make project single header file
