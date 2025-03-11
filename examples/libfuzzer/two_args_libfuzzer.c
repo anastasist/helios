@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-int mystrcmp(const char *, const char *);
-
 int main(int argc, char ** argv) {
     // if (argc == 5) {
     //     int *crash = NULL;
@@ -16,17 +14,10 @@ int main(int argc, char ** argv) {
         printf("Usage: %s <arg1> <arg2>\n", argv[0]);
         return 1;
     }
-    if (mystrcmp(argv[1], "-do") == 0 && mystrcmp(argv[2], "crash") == 0) {
+    if (strcmp(argv[1], "-do") == 0 && strcmp(argv[2], "crash") == 0) {
         printf("Crashing...\n");
         int *crash = NULL;
         *crash = 0;
     }
     return 0;
-}
-
-int mystrcmp(const char *str1, const char *str2){
-    while (*str1++ - *str2++ == 0){
-        if (*(str1-1) == '\0') return 0;
-    }
-    return *(str1-1) - *(str2-1);
 }

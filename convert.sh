@@ -8,9 +8,7 @@
 autogen=\
 '// Start of auto-generated segment
 
-// TBD
-// ...
-#define main real_main
+#define main arg_fuzz__real_main
 
 // End of auto-generated segment
 
@@ -22,11 +20,13 @@ if [ $# != 1 ]; then
 fi
 
 path=$(readlink -n -e $1)
+new_path=$(echo -n "$path" | sed -E 's/(.*)\.c$/\1\.argfuzz\.c/1')
 
 if [ "$path" == "" ]; then
     echo "File does not exist -- or you don't have GNU readlink installed"
     exit 1
 fi
 
-echo -n "$autogen" >> "$path".argfuzz
-cat "$path" >> "$path".argfuzz
+echo -n "$autogen" > "$new_path"
+cat "$path" >> "$new_path"
+# cat "$new_path" >> "$path"

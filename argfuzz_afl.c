@@ -21,46 +21,7 @@
 
 
 #define try(cond, error) do { if (cond) { perror(error); exit(1); }} while(0);
-int arg_fuzz__argparse(const char *data, size_t data_len, int *argc, char **newargv);
 
-// char mutated_argv[MAX_ARGC][MAX_ARG_LEN];
-
-#ifdef __ARGFUZZ_LIBFUZZER__
-#include <stdint.h>
-#include <stddef.h>
-
-// Should not be of any use
-// int LLVMFuzzerInitialize(int *argc, char ***argv) {
-//     ReadAndMaybeModify(argc, argv);
-//     return 0;
-// }
-// int LLVMFuzzerRunDriver(int *argc, char ***argv,\
-//             int (*UserCb)(const uint8_t *Data, size_t Size));
-
-extern int arg_fuzz__real_main(int, char **);
-
-int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-    // Make callee function a main wrapper that is defined in test source file
-    // FuzzMe(Data, Size);
-    int mut_argc;
-    char **mut_argv;
-    // Can we fork after malloc?
-    try(!(mut_argv = malloc(MAX_ARGC*sizeof(char*))), "Failed to allocate mut_argv\n");
-    int i;
-    for (i = 0; i < MAX_ARGC; i++){
-        try(!(mut_argv[i] = malloc(MAX_ARG_LEN*sizeof(char))), "Failed to allocate mut_argv[i]\n");
-    }
-    arg_fuzz__argparse((char *) Data, Size, &mut_argc, mut_argv);
-    arg_fuzz__real_main(mut_argc, mut_argv);
-    for (i = 0; i < mut_argc; i++){
-        free(mut_argv[i]);
-    }
-    free(mut_argv);
-    // __builtin_trap();
-    return 0;
-}
-
-#endif
 
 int arg_fuzz__argparse(const char *data, size_t data_len, int *argc, char **newargv){
     unsigned int data_i, i, j;
@@ -89,7 +50,6 @@ int arg_fuzz__argparse(const char *data, size_t data_len, int *argc, char **newa
     return 0;
 }
 
-#ifdef __ARGFUZZ_AFL__
 int (*arg_fuzz__main_ptr)(int, char **, char **);
 
 int arg_fuzz__pre_main(int argc, char *argv[], char *envp[]){
@@ -99,8 +59,8 @@ int arg_fuzz__pre_main(int argc, char *argv[], char *envp[]){
     // https://github.com/google/AFL/blob/master/llvm_mode/README.llvm : line 114
     // Also only works with afl-clang-fast
         __AFL_INIT();
-    #endif
     // printf("In deforkserver\n");
+    #endif
     return arg_fuzz__main_ptr(argc, argv, envp);
     return 1;
 }
@@ -108,8 +68,6 @@ int arg_fuzz__pre_main(int argc, char *argv[], char *envp[]){
 // Function pointer to the original libc_start_main function
 int (*libc_start_main_orig)(int (*main)(int, char **, char **), int argc, char **ubp_av, void (*init)(void), void (*fini)(void), void (*rtld_fini)(void), void (*stack_end));
 
-// #endif
-// #ifdef __ARGFUZZ_AFL__
 int __libc_start_main(void * func_ptr, int argc, char * argv[], void (*init)(void), void (*fini)(void), void (*rtld_fini)(void), void (*stack_end)) {
  
     // Get the original libc_start_main function
@@ -159,14 +117,7 @@ int __libc_start_main(void * func_ptr, int argc, char * argv[], void (*init)(voi
         printf("argv[%d]: %s\n", i, mut_argv[i]);
     }
 
-    // #endif
-    // #ifdef __ARGFUZZ_LIBFUZZER__
-    // TBI
-    // Do everything in pre-main to escape libc overhead
-    // #endif
-
     // Call the original libc_start_main function
     arg_fuzz__main_ptr = func_ptr;
     return libc_start_main_orig(arg_fuzz__pre_main, mut_argc, mut_argv, init, fini, rtld_fini, stack_end);
 }
-#endif
