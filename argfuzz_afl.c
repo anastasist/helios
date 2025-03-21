@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <limits.h>
 #include <ctype.h>
+#include <errno.h>
+#include <string.h>
 
 #ifndef MAX_ARGC
 #define MAX_ARGC 16
@@ -20,7 +22,7 @@
 #endif
 
 
-#define try(cond, error) do { if (cond) { perror(error); exit(1); }} while(0);
+#define try(cond, error) do { if (cond) { fprintf(stderr, "%s\n", strerror(errno)); perror(error); exit(1); }} while(0);
 
 
 int arg_fuzz__argparse(const char *data, size_t data_len, int *argc, char **newargv){
@@ -53,14 +55,14 @@ int arg_fuzz__argparse(const char *data, size_t data_len, int *argc, char **newa
 int (*arg_fuzz__main_ptr)(int, char **, char **);
 
 int arg_fuzz__pre_main(int argc, char *argv[], char *envp[]){
-    #ifdef __AFL_HAVE_MANUAL_CONTROL
+    // #ifdef __AFL_HAVE_MANUAL_CONTROL
     // Delayed deferred forkserver on AFL
     // This is probably not a good idea:
     // https://github.com/google/AFL/blob/master/llvm_mode/README.llvm : line 114
     // Also only works with afl-clang-fast
-        __AFL_INIT();
+        // __AFL_INIT();
     // printf("In deforkserver\n");
-    #endif
+    // #endif
     return arg_fuzz__main_ptr(argc, argv, envp);
     return 1;
 }
@@ -98,23 +100,25 @@ int __libc_start_main(void * func_ptr, int argc, char * argv[], void (*init)(voi
     // #ifdef __AFL_HAVE_MANUAL_CONTROL
     //     __AFL_INIT();
     // #endif
-    try(!fseek(argfuzz_seed, 0L, SEEK_END),"Failed to fseek\n");
-    argfuzz_len = ftell(argfuzz_seed);
+    try(fseek(argfuzz_seed, 0L, SEEK_END),"Failed to fseek\n");
+    argfuzz_len = ftell(argfuzz_seed) + 1;
     rewind(argfuzz_seed);
-    try(!(argfuzz = malloc(sizeof(char) * argfuzz_len)), "Failed to malloc\n");
+    try(!(argfuzz = malloc(sizeof(char) * (argfuzz_len))), "Failed to malloc\n");
     int c;
     i = 0;
     while ((c = fgetc(argfuzz_seed)) != EOF) argfuzz[i++] = c;
+    argfuzz[i] = '\0';
     // Do not close
-    // try(!fclose(argfuzz_seed), "Failed to fclose\n");
+    // try(fclose(argfuzz_seed), "Failed to fclose\n");
     int mut_argc;
+    printf("argfuzz: %s\n", argfuzz);
     arg_fuzz__argparse(argfuzz, argfuzz_len, &mut_argc, mut_argv);
     free(argfuzz);
 
 
-    printf("argc: %d\n", mut_argc);
+    printf("mutargc: %d\n", mut_argc);
     for (int i = 0; i <= mut_argc; i++) {
-        printf("argv[%d]: %s\n", i, mut_argv[i]);
+        printf("mutargv[%d]: %s\n", i, mut_argv[i]);
     }
 
     // Call the original libc_start_main function

@@ -25,8 +25,6 @@ int main(int argc, char ** argv) {
 }
 
 int mystrcmp(const char *str1, const char *str2){
-    while (*str1++ - *str2++ == 0){
-        if (*(str1-1) == '\0') return 0;
-    }
+    while (*str1++ == *str2++ && *(str1-1));
     return *(str1-1) - *(str2-1);
 }

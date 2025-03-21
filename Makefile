@@ -46,18 +46,22 @@ shell:
 	./examples/afl/two_args-afl
 
 	
-test:
 	# AFL_INST_LIBS=1 \
+	# QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	# -Q -- \
+	#
+	
+test:
+	python3 -c 'print("a\0bug\0")' > ./seed
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	AFL_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
 	-f seed \
 	-o output \
-	-G 12 -- \
-	./examples/afl/two_args
-	# -Q -- \
+	-G 12 \
+	./examples/afl/one_arg
 	
 actions-test:
 	AFL_SKIP_CPUFREQ=1 \
