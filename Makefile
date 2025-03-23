@@ -1,6 +1,7 @@
 ## Makefile to build shared library to use as an LD_PRELOAD
 ## when running targets.
 
+CC?=afl-clang-fast
 ARGFUZZ_AFL=argfuzz_afl
 ARGFUZZ_LIBF=argfuzz_libfuzzer
 ARGFUZZ_FOLDER=argfuzz
@@ -58,10 +59,9 @@ test:
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
-	-f seed \
 	-o output \
 	-G 12 \
-	./examples/afl/one_arg
+	./examples/afl/two_args
 	
 actions-test:
 	AFL_SKIP_CPUFREQ=1 \
