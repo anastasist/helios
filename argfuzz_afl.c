@@ -56,13 +56,16 @@ int arg_fuzz__argparse(const unsigned char *data, ssize_t data_len, int *argc, c
     }
     if (i < MAX_ARGC)
         newargv[i][j] = '\0';
+    *argc = i;
+    for (j = i + 1; i < MAX_ARGC; i++){
+        newargv[j][0] = '\0';
+    }
     // May need to revisit this behaviour - don't free memory so
     // the delayed fork server can utilize it?
     // for (j = i; j < MAX_ARGC; j++){
     //     free(newargv[j]); // Ask about contiguous memory allocation and this segment
     //     newargv[j] = NULL;
     // }
-    *argc = i;
     return 0;
 }
 
@@ -105,6 +108,11 @@ int arg_fuzz__pre_main(int argc, char *argv[], char *envp[]){
         arg_fuzz__main_ptr(mut_argc, mut_argv, envp);
     }
 
+    for (i = 0; i < MAX_ARGC; i++){
+        free(mut_argv[i]);
+    }
+    free(mut_argv);
+    
     // Maybe directly access the fuzzable buffer instead of seed file
     // char *argfuzz = NULL;
     // ssize_t argfuzz_len = 0;
