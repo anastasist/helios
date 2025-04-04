@@ -1,5 +1,8 @@
 # Makefile to automatically build all .c files in the examples directory
-CFLAGS += --coverage -ftest-coverage
+CC=afl-clang-fast # two_args crashes with afl-clang-fast ???
+# CC=gcc
+# CFLAGS += --coverage -ftest-coverage
+# LDFLAGS += -static-libgcc
 
 
 default: all

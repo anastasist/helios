@@ -1,45 +1,71 @@
 ## Makefile to build shared library to use as an LD_PRELOAD
 ## when running targets.
 
-ARGFUZZ=test
+CC?=afl-clang-fast
+ARGFUZZ_AFL=argfuzz_afl
+ARGFUZZ_LIBF=argfuzz_libfuzzer
 ARGFUZZ_FOLDER=argfuzz
 TIME?=60
 
-all: $(ARGFUZZ).so examples
+all: $(ARGFUZZ_AFL).so $(ARGFUZZ_LIBF).so examples
 
 default: all
 
-$(ARGFUZZ).so: $(ARGFUZZ).c
-	$(CC) -shared -fPIC -o $@ $<
-	@echo "Shared library created: $(ARGFUZZ).so"
+$(ARGFUZZ_AFL).so: $(ARGFUZZ_AFL).c
+	$(CC) $(CFLAGS) -shared -fPIC -o $@ $<
+	@echo "Shared library created: $(ARGFUZZ_AFL).so"
+
+$(ARGFUZZ_LIBF).so: $(ARGFUZZ_LIBF).c
+	$(CC) $(CFLAGS) -shared -fPIC -o $@ $<
+	@echo "Shared library created: $(ARGFUZZ_LIBF).so"
 
 clean:
-	rm -f $(ARGFUZZ).so
-	$(MAKE) -C examples clean
+	$(MAKE) -C examples/afl clean
+	$(MAKE) -C examples/libfuzzer clean
+	rm -f $(ARGFUZZ_AFL).so $(ARGFUZZ_LIBF).so
 
 examples:
-	$(MAKE) -C examples
+	$(MAKE) -C examples/afl
+	$(MAKE) -C examples/libfuzzer
 
 shell:
 	 docker run -v $(shell pwd):/$(ARGFUZZ_FOLDER) -w /$(ARGFUZZ_FOLDER) -it aflplusplus/aflplusplus:latest bash
 
 	# AFL_INST_LIBS=1 \
-	
-test:
+
+2argcmplog:
+	AFL_INST_LIBS=1 \
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
 	-f seed \
 	-o output \
 	-G 12 \
-	-Q -- \
-	./examples/two_args
+	-c ./examples/afl/two_args-cmplog -- \
+	./examples/afl/two_args-afl
+
+	
+	# AFL_INST_LIBS=1 \
+	# QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	# -Q -- \
+	#
+	
+test:
+	python3 -c 'print("a\0bug\0")' > ./seed
+	AFL_SKIP_CPUFREQ=1 \
+	AFL_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	AFL_BENCH_UNTIL_CRASH=1 \
+	afl-fuzz \
+	-i input/ \
+	-o output \
+	-G 12 \
+	./examples/afl/two_args
 	
 actions-test:
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
@@ -52,7 +78,7 @@ actions-test:
 
 demo_one:
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
@@ -62,13 +88,13 @@ demo_one:
 	-V $(TIME) \
 	-T "DEMO #1" \
 	-Q -- \
-	./examples/one_arg
+	./examples/afl/one_arg
 
 demo_two:
 	# AFL_QEMU_PERSISTENT_GPR=1 \
 	AFL_INST_LIBS=1 \
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
@@ -78,6 +104,6 @@ demo_two:
 	-V $(TIME) \
 	-T "DEMO #2" \
 	-Q -- \
-	./examples/two_args
+	./examples/afl/two_args
 
 .PHONY: clean examples shell
