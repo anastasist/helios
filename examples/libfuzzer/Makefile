@@ -1,7 +1,7 @@
 # Makefile to automatically build all .c files in the examples directory
 CC = clang
 CFLAGS += -g -fsanitize=fuzzer,address
-LDFLAGS += ../../argfuzz_libfuzzer.so
+LDFLAGS += ../../helios_libfuzzer.so
 # LDFLAGS += -L../../argfuzz_libfuzzer.so -largfuzz_libfuzzer.so
 
 default: all
