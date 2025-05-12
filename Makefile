@@ -74,7 +74,7 @@ actions-test:
 	-G 12 \
 	-V 60 \
 	-Q -- \
-	./examples/one_arg
+	./examples/afl/one_arg
 
 demo_one:
 	AFL_SKIP_CPUFREQ=1 \
