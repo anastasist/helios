@@ -57,7 +57,7 @@ extern int LLVMFuzzerRunDriver(int *argc, char ***argv,\
 int (*_helios__main_ptr)(int, char **, char **);
 int _helios__argparse(char *data, size_t data_len, int *argc, char **newargv);
 
-int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
+int User_LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     _helios__argparse((char *)Data, Size, &newargc, argv_max);
     _helios__main_ptr(newargc, argv_max, *senvp);
     return 0;
@@ -90,12 +90,12 @@ int _helios__pre_main(int argc, char *argv[], char *envp[]){
         try((ARG_MAX = sysconf(_SC_ARG_MAX)) == -1, "Failed to get ARG_MAX from system\n");
     #endif
 
-    LLVMFuzzerRunDriver(&argc, &argv, LLVMFuzzerTestOneInput);
+    LLVMFuzzerRunDriver(&argc, &argv, User_LLVMFuzzerTestOneInput);
 
         // arg_fuzz__argparse(buf, len, &mut_argc, mut_argv);
         // arg_fuzz__main_ptr(mut_argc, mut_argv, envp);
 
-        return 0;
+    return 0;
 }
 
 // Function pointer to the original libc_start_main function
