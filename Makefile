@@ -2,27 +2,27 @@
 ## when running targets.
 
 CC?=afl-clang-fast
-ARGFUZZ_AFL=argfuzz_afl
-ARGFUZZ_LIBF=argfuzz_libfuzzer
+HELIOS_AFL=helios_afl
+HELIOS_LIBF=helios_libfuzzer
 ARGFUZZ_FOLDER=argfuzz
 TIME?=60
 
-all: $(ARGFUZZ_AFL).so $(ARGFUZZ_LIBF).so examples
+all: $(HELIOS_AFL).so $(HELIOS_LIBF).so examples
 
 default: all
 
-$(ARGFUZZ_AFL).so: $(ARGFUZZ_AFL).c
+$(HELIOS_AFL).so: $(HELIOS_AFL).c
 	$(CC) $(CFLAGS) -shared -fPIC -o $@ $<
-	@echo "Shared library created: $(ARGFUZZ_AFL).so"
+	@echo "Shared library created: $(HELIOS_AFL).so"
 
-$(ARGFUZZ_LIBF).so: $(ARGFUZZ_LIBF).c
+$(HELIOS_LIBF).so: $(HELIOS_LIBF).c
 	$(CC) $(CFLAGS) -shared -fPIC -o $@ $<
-	@echo "Shared library created: $(ARGFUZZ_LIBF).so"
+	@echo "Shared library created: $(HELIOS_LIBF).so"
 
 clean:
 	$(MAKE) -C examples/afl clean
 	$(MAKE) -C examples/libfuzzer clean
-	rm -f $(ARGFUZZ_AFL).so $(ARGFUZZ_LIBF).so
+	rm -f $(HELIOS_AFL).so $(HELIOS_LIBF).so
 
 examples:
 	$(MAKE) -C examples/afl
@@ -36,7 +36,7 @@ shell:
 2argcmplog:
 	AFL_INST_LIBS=1 \
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(HELIOS_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
@@ -48,14 +48,14 @@ shell:
 
 	
 	# AFL_INST_LIBS=1 \
-	# QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	# QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(HELIOS_AFL).so \
 	# -Q -- \
 	#
 	
 test:
 	python3 -c 'print("a\0bug\0")' > ./seed
 	AFL_SKIP_CPUFREQ=1 \
-	AFL_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	AFL_PRELOAD=$(shell pwd)/$(HELIOS_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
@@ -65,7 +65,7 @@ test:
 	
 actions-test:
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(HELIOS_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
@@ -74,11 +74,11 @@ actions-test:
 	-G 12 \
 	-V 60 \
 	-Q -- \
-	./examples/one_arg
+	./examples/afl/one_arg
 
 demo_one:
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(HELIOS_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \
@@ -94,7 +94,7 @@ demo_two:
 	# AFL_QEMU_PERSISTENT_GPR=1 \
 	AFL_INST_LIBS=1 \
 	AFL_SKIP_CPUFREQ=1 \
-	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(ARGFUZZ_AFL).so \
+	QEMU_SET_ENV=LD_PRELOAD=$(shell pwd)/$(HELIOS_AFL).so \
 	AFL_BENCH_UNTIL_CRASH=1 \
 	afl-fuzz \
 	-i input/ \

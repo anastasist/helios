@@ -11,6 +11,9 @@ int main(int argc, char ** argv) {
     //     return 1;
     // }
     if (argc != 3) {
+        int i;
+        for (i = 0; i < argc; i++)
+            fprintf(stdout, "argv[%d/%d]: %s\n", i, argc, argv[i]);
         printf("Usage: %s <arg1> <arg2>\n", argv[0]);
         return 1;
     }

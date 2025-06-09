@@ -17,6 +17,10 @@ TODO:
 - [ ] update patched sudo in package
 - [ ] sudo demo Friday
 - [ ] make own strcmp to test afl
+- [ ] afl-libfuzzer joit operation
+- [ ] make afl-clang-fast default compiler for afl++ mode
+- [ ] afl-mode will fuzz up to 1MB (buffer max len) instead of ARG_MAX
+- [ ] update Makefiles and fix libfuzzer. Merge to main
 
 
 - [ ] refactor code - make project single header file
