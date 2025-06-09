@@ -1,21 +1,18 @@
 # Makefile to automatically build all .c files in the examples directory
 CC = clang
-CFLAGS += -g -fsanitize=fuzzer,address
-LDFLAGS += ../../helios_libfuzzer.so
+CFLAGS += -g -fsanitize=fuzzer,address -Dmain=helios__main ../../helios_libfuzzer.c
+# LDFLAGS += ../../helios_libfuzzer.so
 # LDFLAGS += -L../../argfuzz_libfuzzer.so -largfuzz_libfuzzer.so
 
 default: all
 
-all: $(patsubst %.c,%.argfuzz,$(wildcard *.c))
+all: $(patsubst %.c,%,$(wildcard *.c))
 
-%.argfuzz.c: %.c
-	../../convert.sh $<
+%: %.c
+	$(CC) $(CFLAGS) -o $@ $<
 
-%.argfuzz: %.argfuzz.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
-
-clean: $(patsubst %.c,%.argfuzz,$(wildcard *.c))
-	rm -f $^ *.argfuzz*
+clean: $(patsubst %.c,%,$(wildcard *.c))
+	rm -f $^
 
 # %: %.c
 # 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
